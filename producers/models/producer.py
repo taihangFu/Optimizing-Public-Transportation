@@ -43,16 +43,21 @@ class Producer:
             Producer.existing_topics.add(self.topic_name)
 
         # Configure the AvroProducer
-        self.producer = AvroProducer({"bootstrap.servers": BROKER_URL}, schema_registry=schema_registry)
+        self.producer = AvroProducer(
+            self.broker_properties,
+            default_key_schema=key_schema,
+            default_value_schema=value_schema,
+        )
 
     def create_topic(self):
         """Creates the producer topic if it does not already exist"""
         #
         #
-        # TODO: Write code that creates the topic for this producer if it does not already exist on
+        # creates the topic for this producer if it does not already exist on
         # the Kafka Broker.
         #
         #
+        
         logger.info("topic creation kafka integration incomplete - skipping")
 
     def time_millis(self):
