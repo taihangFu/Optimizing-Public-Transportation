@@ -57,8 +57,23 @@ class Producer:
         # the Kafka Broker.
         #
         #
-        
-        logger.info("topic creation kafka integration incomplete - skipping")
+            futures = client.create_topics(
+        [
+            NewTopic(
+                topic=self.topic_name,
+                num_partitions=self.num_partitions,
+                replication_factor=self.num_replicas,
+            )
+        ]
+    )
+
+    for topic, future in futures.items():
+        try:
+            future.result()
+            logger.info("topic created")
+        except Exception as e:
+            logger.exception(f"failed to create topic {topic_name}: {e}") #TODO: .error or .exception?
+       
 
     def time_millis(self):
         return int(round(time.time() * 1000))
