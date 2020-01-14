@@ -24,19 +24,13 @@ class Turnstile(Producer):
             .replace("-", "_")
             .replace("'", "")
         )
-
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
+                             
         super().__init__(
             f"{station_name}", # TODO: Come up with a better topic name
             key_schema=Turnstile.key_schema,
-            # TODO: value_schema=Turnstile.value_schema, TODO: Uncomment once schema is defined
-            # TODO: num_partitions=???,
-            # TODO: num_replicas=???,
+            value_schema=Turnstile.value_schema,
+            num_partitions=4, #TODO: Partitions = Max(Overall Throughput/Producer Throughput, Overall Throughput/Consumer Throughput) 
+            num_replicas=1, #TODO: experiments
         )
         self.station = station
         self.turnstile_hardware = TurnstileHardware(station)
