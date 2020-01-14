@@ -31,19 +31,13 @@ class Station(Producer):
             .replace("'", "")
         )
 
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
-        topic_name = f"{station_name}" # TODO: Come up with a better topic name
+        topic_name = f"com.udacity.station.arrivals.v1" #topic name convention: <namespace or domain>.<schema or model>.<event>
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,
-            # TODO: value_schema=Station.value_schema, # TODO: Uncomment once schema is defined
-            # TODO: num_partitions=???,
-            # TODO: num_replicas=???,
+            value_schema=Station.value_schema, 
+            num_partitions=3, #TODO: Partitions = Max(Overall Throughput/Producer Throughput, Overall Throughput/Consumer Throughput) 
+            num_replicas=1, #TODO: experiments
         )
 
         self.station_id = int(station_id)
