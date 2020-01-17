@@ -30,16 +30,12 @@ class Weather(Producer):
     summer_months = set((6, 7, 8))
 
     def __init__(self, month):
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
         super().__init__(
-            "weather", # TODO: Come up with a better topic name
+            "com.udacity.weather.v1", # Come up with a better topic name
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
+            num_partitions=1, #TODO: need experiments
+            num_replicas=1 #TODO: need experiments
         )
 
         self.status = Weather.status.sunny
