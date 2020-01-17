@@ -68,35 +68,27 @@ class Weather(Producer):
 
         #
         #
-        # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
-        # specify the Avro schemas and verify that you are using the correct Content-Type header.
+        # Posting a weather event to REST Proxy.
+        #
         #
         #
         logger.info("weather kafka proxy integration incomplete - skipping")
-        #resp = requests.post(
-        #    #
-        #    #
-        #    # TODO: What URL should be POSTed to?
-        #    #
-        #    #
-        #    f"{Weather.rest_proxy_url}/TODO",
-        #    #
-        #    #
-        #    # TODO: What Headers need to bet set?
-        #    #
-        #    #
-        #    headers={"Content-Type": "TODO"},
-        #    data=json.dumps(
-        #        {
-        #            #
-        #            #
-        #            # TODO: Provide key schema, value schema, and records
-        #            #
-        #            #
-        #        }
-        #    ),
-        #)
-        #resp.raise_for_status()
+        
+        # Provide key schema, value schema, and records
+        data = {"key_schema": self.key_schema, #TODO: to string
+                "value_schema": self.value_schema, #TODO: to string
+                "records":  [{
+                    "key": {"timestamp": self.time_millis()},
+                    "value": { "temperature": self.temp, "status": self.status.name }
+                }]
+                   }
+        
+        #POST request
+        resp = requests.post(
+           f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
+           headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
+           data=json.dumps(data) 
+        resp.raise_for_status()
 
         logger.debug(
             "sent weather data to kafka, temp: %s, status: %s",
