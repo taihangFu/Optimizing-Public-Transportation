@@ -32,8 +32,10 @@ class TransformedStation(faust.Record):
 # Define a Faust Stream that ingests data from the Kafka Connect stations topic and
 #   places it into a new topic with only the necessary information.
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
+
 topic = app.topic("com.udacity.stations", value_type=Station)
 out_topic = app.topic("com.udacity.staions.table", partitions=1)
+
 table = app.Table(
     "org.chicago.cta.stations.table.v1"
     default=TransformedStation,
@@ -41,14 +43,33 @@ table = app.Table(
     changelog_topic=out_topic,
 )
 
+# Using Faust, transform input `Station` records into `TransformedStation` records. 
+@app.agent(topic)
+async def process(stream):
 
-
-
-# TODO: Using Faust, transform input `Station` records into `TransformedStation` records. Note that
-# "line" is the color of the station. So if the `Station` record has the field `red` set to true,
-# then you would set the `line` of the `TransformedStation` record to the string `"red"`
-
-
+    async for event in stream:
+        # "line" is the color of the station.
+        line = None
+        if event.red:
+            line = 'red'
+        elif event.blue:
+            line = 'blue'
+        elif event.blue:
+            line = 'green'
+        else:
+            logger.info(f"No line color for {val.station_id}")
+        
+        # Serialization: Station records -> TransformedStation
+        out = TransformedStation(
+            station_id = event.station_id,
+            station_name = event.station_name,
+            order = event.order,
+            line = line,
+        )
+        
+        # add to Table
+        table[event.station_id]  = out
+       
 
 
 if __name__ == "__main__":
