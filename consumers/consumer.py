@@ -81,13 +81,27 @@ class KafkaConsumer:
         """Polls for a message. Returns 1 if a message was received, 0 otherwise"""
         #
         #
-        # TODO: Poll Kafka for messages. Make sure to handle any errors or exceptions.
-        # Additionally, make sure you return 1 when a message is processed, and 0 when no message
+        # Poll Kafka for messages. Handle any errors or exceptions.
+        # return 1 when a message is processed, and 0 when no message
         # is retrieved.
         #
         #
-        logger.info("_consume is incomplete - skipping")
-        return 0
+        try:
+            message = c.poll(self.consume_timeout)
+            logger.info(f"consume message {message.key()}: {message.value()}")
+        except error:
+            logger.error("_consume is incomplete - skipping")
+            return 0
+        
+         if message is None:
+            logger.debug('Message is NONE')
+            return 0
+        elif message.error() is not None:
+            logger.error('consumed message contains error info: {message.error()}')
+            return 0
+        else:
+            self.message_handler(message)
+            return 1
 
 
     def close(self):
