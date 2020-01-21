@@ -90,7 +90,7 @@ class KafkaConsumer:
             message = c.poll(self.consume_timeout)
             logger.info(f"consume message {message.key()}: {message.value()}")
         except error:
-            logger.error("_consume is incomplete - skipping")
+            logger.error("failed to poll message %s: %s", self.topic_name_pattern, e)
             return 0
         
          if message is None:
