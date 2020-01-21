@@ -42,7 +42,7 @@ class KafkaConsumer:
                 "default.topic.config": {"auto.offset.reset": "earliest"}
         }
 
-        # TODO: Create the Consumer, using the appropriate type.
+        # Create the Consumer
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
             self.consumer = AvroConsumer(self.broker_properties)
@@ -52,24 +52,19 @@ class KafkaConsumer:
 
         #
         #
-        # TODO: Configure the AvroConsumer and subscribe to the topics. Make sure to think about
-        # how the `on_assign` callback should be invoked.
+        #  Configure the AvroConsumer and subscribe to the topics.
         #
         #
-        # self.consumer.subscribe( TODO )
+        self.consumer.subscribe([self.topic_name_pattern], on_assign=on_assign)
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
-        # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
+        # If the topic is configured to use `offset_earliest` set the partition offset to
         # the beginning or earliest
         logger.info("on_assign is incomplete - skipping")
         for partition in partitions:
-            pass
-            #
-            #
-            # TODO
-            #
-            #
+            if offset_earliest:
+                partition.offset = OFFSET_BEGINNING
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
