@@ -106,8 +106,6 @@ class KafkaConsumer:
 
     def close(self):
         """Cleans up any open kafka consumers"""
-        #
-        #
-        # TODO: Cleanup the kafka consumer
-        #
-        #
+        # Cleanup the kafka consumer
+        logger.info("closing consumer...")
+        consumer.close()
