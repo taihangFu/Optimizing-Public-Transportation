@@ -31,11 +31,11 @@ class Weather(Producer):
 
     def __init__(self, month):
         super().__init__(
-            "com.udacity.weather.v1", # Come up with a better topic name
+            "com.udacity.weather.v1",
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
-            num_partitions=1, #TODO: need experiments
-            num_replicas=1 #TODO: need experiments
+            num_partitions=1,
+            num_replicas=1
         )
 
         self.status = Weather.status.sunny
@@ -75,8 +75,8 @@ class Weather(Producer):
         logger.info("weather kafka proxy integration incomplete - skipping")
         
         # Provide key schema, value schema, and records
-        data = {"key_schema": self.key_schema, #TODO: to string
-                "value_schema": self.value_schema, #TODO: to string
+        data = {"key_schema": self.key_schema,
+                "value_schema": self.value_schema,
                 "records":  [{
                     "key": {"timestamp": self.time_millis()},
                     "value": { "temperature": self.temp, "status": self.status.name }

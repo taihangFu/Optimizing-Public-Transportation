@@ -32,8 +32,8 @@ class Station(Producer):
             topic_name,
             key_schema=Station.key_schema,
             value_schema=Station.value_schema, 
-            num_partitions=3, #TODO: Partitions = Max(Overall Throughput/Producer Throughput, Overall Throughput/Consumer Throughput) 
-            num_replicas=1, #TODO: experiments
+            num_partitions=3, 
+            num_replicas=1, 
         )
 
         self.station_id = int(station_id)
