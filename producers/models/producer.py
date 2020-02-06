@@ -57,7 +57,21 @@ class Producer:
         # the Kafka Broker.
         #
         #
-            futures = client.create_topics(
+        
+        client = AdminClient(
+            {"bootstrap.servers": self.broker_properties["bootstrap.servers"]}
+        )
+
+        topic_exsists = self.check_topic_exists(client, self.topic_name)
+
+        if(topic_exsists):
+            logger.info(f'Topic {self.topic_name} exsists. Will not create')
+            return
+
+        logger.info(f"Creating topic: {self.topic_name}")
+
+        
+        futures = client.create_topics(
         [
             NewTopic(
                 topic=self.topic_name,
@@ -65,14 +79,14 @@ class Producer:
                 replication_factor=self.num_replicas,
             )
         ]
-    )
+        )
 
-    for topic, future in futures.items():
-        try:
-            future.result()
-            logger.info("topic created")
-        except Exception as e:
-            logger.exception(f"failed to create topic {topic_name}: {e}") #TODO: .error or .exception?
+        for topic, future in futures.items():
+            try:
+                future.result()
+                logger.info("topic created")
+            except Exception as e:
+                logger.exception(f"failed to create topic {topic_name}: {e}") #TODO: .error or .exception?
        
 
     def time_millis(self):
