@@ -93,7 +93,7 @@ class KafkaConsumer:
             logger.error("failed to poll message %s: %s", self.topic_name_pattern, e)
             return 0
         
-         if message is None:
+        if message is None:
             logger.debug('Message is NONE')
             return 0
         elif message.error() is not None:
