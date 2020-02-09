@@ -24,9 +24,9 @@ KSQL_STATEMENT = """
 CREATE TABLE turnstile (
     station_id INT,
     station_name VARCHAR,
-    line #TODO: enum??
+    line VARCHAR
 ) WITH (
-    KAFKA_TOPIC = #TODO,
+    KAFKA_TOPIC = 'com.udacity.station.turnstile.v1',
     VALUE_FORMAT = 'avro',
     KEY = 'station_id'
 );
