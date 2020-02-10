@@ -61,15 +61,14 @@ class Producer:
         client = AdminClient(
             {"bootstrap.servers": self.broker_properties["bootstrap.servers"]}
         )
-
-        topic_exsists = self.check_topic_exists(client, self.topic_name)
-
-        if(topic_exsists):
-            logger.info(f'Topic {self.topic_name} exsists. Will not create')
+        
+        # Do not create topics if already exist
+        topic_metadata = client.list_topics(timeout=5)
+        if self.topic_name in set(
+            t.topic for t in iter(topic_metadata.topics.values())
+        ):
+            logger.info(f"Topic {self.topic_name} already existed.")
             return
-
-        logger.info(f"Creating topic: {self.topic_name}")
-
         
         futures = client.create_topics(
         [
@@ -84,9 +83,9 @@ class Producer:
         for topic, future in futures.items():
             try:
                 future.result()
-                logger.info("topic created")
+                logger.info("Topic %s created", topic)
             except Exception as e:
-                logger.exception(f"failed to create topic {topic_name}: {e}") #TODO: .error or .exception?
+                logger.exception("failed to create topic %s: %s", topic, e) #TODO: .error or .exception?
        
 
     def time_millis(self):
