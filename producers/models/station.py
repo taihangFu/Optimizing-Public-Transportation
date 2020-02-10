@@ -27,9 +27,9 @@ class Station(Producer):
             .replace("'", "")
         )
 
-        topic_name = f"com.udacity.station.arrivals.v1" #topic name convention: <namespace or domain>.<schema or model>.<event>
+        #topic_name = f"com.udacity.station.arrivals.v1" #topic name convention: <namespace or domain>.<schema or model>.<event>
         super().__init__(
-            topic_name,
+            topic_name=f"com.udacity.station.arrivals.v1",
             key_schema=Station.key_schema,
             value_schema=Station.value_schema, 
             num_partitions=3, 
@@ -52,21 +52,25 @@ class Station(Producer):
         # Producing an arrival message to Kafka
         #
         #
-        logger.info("arrival kafka integration incomplete - skipping")
-        self.producer.produce(
-           topic=self.topic_name,
-           key={"timestamp": self.time_millis()},
-           value={
-               "station_id": self.station_id,
-               "train_id": train.train_id,
-               "direction": direction,
-               "line": self.color.name,
-               "train_status": train.status.name,
-               "prev_station_id": prev_station_id,
-               "prev_direction": prev_direction
-           },
-        )
-
+        logger.info("arrival kafka integration")
+        try:
+            self.producer.produce(
+                topic=self.topic_name,
+                key={"timestamp": self.time_millis()},
+                value={
+                    "station_id": self.station_id,
+                    "train_id": train.train_id,
+                    "direction": direction,
+                    "line": self.color.name,
+                    "train_status": train.status.name,
+                    "prev_station_id": prev_station_id,
+                    "prev_direction": prev_direction,
+                },
+            )
+        except Exception as e:
+            logger.fatal(e)
+            raise e
+            
     def __str__(self):
         return "Station | {:^5} | {:<30} | Direction A: | {:^5} | departing to {:<30} | Direction B: | {:^5} | departing to {:<30} | ".format(
             self.station_id,
