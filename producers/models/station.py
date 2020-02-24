@@ -7,6 +7,8 @@ from confluent_kafka import avro
 from models import Turnstile
 from models.producer import Producer
 
+import json
+
 
 logger = logging.getLogger(__name__)
 
@@ -53,20 +55,26 @@ class Station(Producer):
         #
         #
         logger.info("arrival kafka integration")
+        value={
+                   "station_id": self.station_id,
+                    "train_id": train.train_id,
+                    "direction": direction,
+                    "line": self.color.name,
+                    "train_status": train.status.name, 
+                    "prev_station_id": prev_station_id,
+                    "prev_direction": prev_direction,
+                }
+        
+        #double check json value
+        logger.info("Values for train arrivals are: %s ", json.dumps(value))
+
+        
         try:
             self.producer.produce(
                 topic=self.topic_name,
                 key={"timestamp": self.time_millis()},
-                value={
-                    "station_id": self.station_id,
-                    "train_id": train.train_id,
-                    "direction": direction,
-                    "line": self.color.name,
-                    "train_status": train.status.name,
-                    "prev_station_id": prev_station_id,
-                    "prev_direction": prev_direction,
-                },
-            )
+                value=value
+                )
         except Exception as e:
             logger.fatal(e)
             raise e
